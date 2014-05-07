@@ -719,6 +719,7 @@ a:focus {
 
 .step{
     font-family: monospace;
+    font-size: 36px;
 }
 
 ul,ol,dl{

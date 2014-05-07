@@ -56,6 +56,7 @@
           (make-outside-script ((lookup-table properties 'impress.js-path) 'val))
           (make-inside-script "impress().init();")))
       port)
+    (newline port)
     (when (string? name) (close-output-port port)))
 
   #t)
@@ -77,7 +78,7 @@
 (define (not-p p)
   (lambda (x) (not (p x))))
 
-(define (matrix-style contents num-cols)
+(define (matrix-style contents [num-cols 5])
   (let* ([contents (filter (not-p position-specified?) contents)]
          [size (length contents)])
     (let loop ([count 0]
@@ -145,8 +146,8 @@
   (lambda (msg)
     (match msg
            ['to-html 
-            (make-p '()
-                    (make-span `(("style" ,(css-handler css-properties))) 
+            (make-p `(("style" ,(css-handler css-properties)))
+                    (make-span '()
                                str))]
            ['type 'content])))
 
@@ -154,9 +155,9 @@
   (lambda (msg)
     (match msg
            ['to-html
-            (make-p '()
-                    (make-strong '()
-                                 (make-span `(("style" ,(css-handler css-properties))) str)))]
+            (make-p `(("style" ,(css-handler css-properties))) 
+                    (make-strong '() 
+                                 (make-span '() str)))]
            ['type 'content])))
 
 
@@ -183,3 +184,19 @@
 
 (define (unordered-list . args)
   (apply general-list (cons make-ul args)))
+
+(define (empty-content)
+  (lambda (msg)
+    (match msg
+           ['type 'content]
+           ['to-html ""])))
+
+(define (slide-cover title [subtitle ""] [author ""])
+  (slide (n-rows-box 
+                     (empty-content)
+                     (strong-text title (font-size "54px") (text-align "center"))
+                     (text subtitle (font-size "32px") (text-align "center") (css-style "font-style: italic"))
+                     (text author (font-size "24px") (text-align "right"))
+                     (empty-content) 
+                     (empty-content))))
+

@@ -34,9 +34,9 @@
 (define-property x-coordinate 'data-x)
 (define-property y-coordinate 'data-y)
 (define-property z-coordinate 'data-z)
-(define-property x-rotate 'data-x-rotate)
-(define-property y-rotate 'data-y-rotate)
-(define-property z-rotate 'data-z-rotate)
+(define-property x-rotate 'data-rotate-x)
+(define-property y-rotate 'data-rotate-y)
+(define-property z-rotate 'data-rotate-z)
 (define-property scale 'data-scale)
 
 ;css-properties
@@ -63,6 +63,10 @@
 
 (define-css-property css-style 'css-style
   (lambda (s) s))
+
+(define-css-property text-align 'text-align
+  (lambda (s)
+    (format "text-align: ~A;" s)))
 
 (define-css-property background-color 'bg-color 
   (lambda (r g b [a 1]) 

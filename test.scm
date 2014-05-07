@@ -4,7 +4,7 @@
   (n-rows-box (n-columns-box top-left top-right)
               bottom))
 
-(impress (font-size "36px")
+(impress (font-size "24px")
          (slide 
            (text "First text" (font-size "150%")) 
            (text "Second text"))
@@ -45,7 +45,7 @@
 
          (title "new title") 
          (output-filename "templates/test.html")
-         (slide-flow-style "circle" 5000))
+         (slide-flow-style "matrix" 5))
 
 (define prop-list
   (list (title "old-title")
