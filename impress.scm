@@ -9,7 +9,7 @@
   (eq? (obj 'type) 'content))
 
 (define (impress . args)
-  (parse-args args contents properties)
+  (parse-args args contents properties css-properties)
 
   ; default value for properties
   (define default-properties
@@ -47,10 +47,11 @@
     (display 
       (make-html
         (apply make-head
-               (map property-handler properties))
+               (append (map property-handler properties)
+                       (list (make-style (css-all-selector (css-handler css-properties))))))
         (make-body
           (apply make-div 
-                 (cons (list (cons "id" "impress"))
+                 (cons `(("id" "impress"))
                        (map (lambda (x) (x 'to-html)) contents)))
           (make-outside-script ((lookup-table properties 'impress.js-path) 'val))
           (make-inside-script "impress().init();")))
@@ -117,13 +118,13 @@
           [val (p 'val)])
       (cond [(regexp-match-exact? (regexp "data-.+") 
                                   (symbol->string key))
-             (cons key val)]
+             (list key val)]
             [else (error "slide: unknown property " key " " val)])))
 
   (define (to-html)
     (make-div
-      (append (list (cons "class" "step slide")
-                    (cons "style" (css-handler css-properties)))
+      (append (list `("class" "step slide")
+                    `("style" ,(css-handler css-properties)))
               (map property-handler properties))
       ((apply vertical-box contents) 'to-html)))
 
@@ -143,6 +144,42 @@
 (define (text str . css-properties)
   (lambda (msg)
     (match msg
-           ['to-html (make-div (list (cons "style" (css-handler css-properties))) 
-                               (make-p str))]
+           ['to-html 
+            (make-p '()
+                    (make-span `(("style" ,(css-handler css-properties))) 
+                               str))]
            ['type 'content])))
+
+(define (strong-text str . css-properties)
+  (lambda (msg)
+    (match msg
+           ['to-html
+            (make-p '()
+                    (make-strong '()
+                                 (make-span `(("style" ,(css-handler css-properties))) str)))]
+           ['type 'content])))
+
+
+(define (general-list make-list . args)
+  (parse-args args contents properties css-properties)
+
+  (define (to-html)
+    (define items-html
+      (map (lambda (x)
+             (make-li '() (x 'to-html)))
+           contents))
+
+    (apply make-list
+           (cons `(("style" ,(css-handler css-properties)))
+                  items-html)))
+  
+  (lambda (msg)
+    (match msg
+           ['to-html (to-html)]
+           ['type 'content])))
+
+(define (ordered-list . args)
+  (apply general-list (cons make-ol args)))
+
+(define (unordered-list . args)
+  (apply general-list (cons make-ul args)))

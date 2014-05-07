@@ -58,16 +58,22 @@
   (string-join (map (lambda (x) (x 'to-css)) csses) ";"))
 
 (define-css-property font-size 'font-size 
-   (lambda (s) 
-     (format "font-size: ~A;" s)))
+  (lambda (s) 
+    (format "font-size: ~A;" s)))
 
 (define-css-property css-style 'css-style
-   (lambda (s) s))
+  (lambda (s) s))
 
 (define-css-property background-color 'bg-color 
-   (lambda (r g b) 
-      (format "background-color: rgb(~A,~A,~A);" r g b)))
+  (lambda (r g b [a 1]) 
+    (format "background-color: rgba(~A,~A,~A,~A);" r g b a)))
 
+(define-css-property border-radius 'border-radius
+  (lambda (r)
+    (format "border-radius:~A;" r)))
+
+(define (css-all-selector rules)
+  (format ".slide {~N ~A ~N}~N" rules))
 
 (define (property->pair p)
   (cons (p 'key) (p 'val)))

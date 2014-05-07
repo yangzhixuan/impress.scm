@@ -22,19 +22,11 @@
 (define (make-head . tags)
   (format "<head>~N ~A ~N</head>" (string-join tags "\n")))
 
+(define (make-style . tags)
+  (format "<style> ~A ~N</style>" (string-join tags "\n")))
+
 (define (make-body . tags)
   (format "<body>~N ~A ~N</body>" (string-join tags "\n")))
-
-(define (make-div properties . tags)
-  (define properties-string
-    (string-join (map 
-                   (lambda (pair) 
-                     (format "~A=\"~A\"" (car pair) (cdr pair)))
-                   properties)))
-  (define tags-string
-    (string-join tags "\n"))
-  
-  (format "<div ~A>~N ~A~N </div>" properties-string tags-string))
 
 (define (make-title title)
   (format "<title>~A</title>" title))
@@ -54,5 +46,29 @@
 (define (make-meta-viewpoint val)
   (format "<meta name=\"viewpoint\" content=\"~A\">" val))
 
-(define (make-p str)
-  (format "<p>~A</p>" str))
+
+(define-syntax define-general-html-tag
+  (syntax-rules ()
+    ((_ name tag-identifier)
+
+     (define (name properties . tags)
+       (define properties-string
+         (string-join (map 
+                        (lambda (pair) 
+                          (if (equal? (cadr pair) "") 
+                            ""
+                            (format "~A=\"~A\"" (car pair) (cadr pair))))
+                        properties)))
+       (define tags-string
+         (string-join tags "\n"))
+
+       (format "<~A ~A>~N ~A~N </~A>" tag-identifier properties-string tags-string tag-identifier)))))
+
+(define-general-html-tag make-div "div")
+(define-general-html-tag make-span "span")
+(define-general-html-tag make-p "p")
+(define-general-html-tag make-strong "strong")
+(define-general-html-tag make-ol "ol")
+(define-general-html-tag make-ul "ul")
+(define-general-html-tag make-li "li")
+

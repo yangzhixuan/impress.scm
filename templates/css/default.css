@@ -178,7 +178,7 @@ a:focus {
     box-sizing:         border-box;
 
     font-family: 'PT Serif', georgia, serif;
-    font-size: 48px;
+//    font-size: 48px;
     line-height: 1.5;
 }
 
@@ -719,11 +719,10 @@ a:focus {
 
 .step{
     font-family: monospace;
-    font-size: 36px;
 }
 
 ul,ol,dl{
-    margin-top: 5%;
+    margin-left: 5%;
 }
 dt {
     font-weight: bold;
